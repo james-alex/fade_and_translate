@@ -129,17 +129,20 @@ FadeAndTranslate(
 
 ### Callbacks
 
-[FadeAndTranslate] has two callbacks, [onStart] and [onComplete], which will
-be called when the state of the animation reaches [AnimationStatus.dismissed]
-and [AnimationStatus.completed] respectively.
+[FadeAndTranslate] has four callbacks: [onStart] and [onComplete], which are called
+when a transition starts and ends, respectively; [onDismissed] and [onCompleted],
+which are called when the status of the transition animation has reached
+[AnimationStatus.dismissed] and [AnimationStatus.completed], respectively.
 
 ```dart
 /// Builds a widget with callbacks that note the state of the transition.
 FadeAndTranslate(
   visible: _visible,
   translate: Offset(0.0, 20.0),
-  onStart: () => print('Starting transition.'),
-  onComplete: () => print('Transition has finished.'),
+  onStart: () => print('Starting the transition.'),
+  onComplete: () => print('The transition has finished.'),
+  onDismissed: () => print('The transition has returned to its original state.'),
+  onCompleted: () => print('The transition has finished changing states.'),
   child: MyWidget(),
 );
 ```

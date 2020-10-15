@@ -34,11 +34,19 @@ class FadeAndTranslate extends StatefulWidget {
   /// isn't `null` and [autoStartDelay] is, [autoStartDelay] will inherit [delay]'s
   /// specified duration.
   ///
-  /// [onStart] is a callback triggered at the start of the transition,
-  /// when the animation reaches [AnimationStatus.dismissed].
   ///
-  /// [onComplete] is a callback triggered when the transition has completed,
-  /// when the animation reaches [AnimationStatus.completed].
+  /// [onStart] is a callback executed when the transiton has started (when
+  /// the transition is toggled,) regardless of the direction of the transition.
+  ///
+  /// [onComplete] is a callback executed when the transition has ended,
+  /// regardless of the direction of the transition, when the animation reaches
+  /// either [AnimationStatus.completed] or [AnimationStatus.dismissed].
+  ///
+  /// [onCompleted] is a callback executed when the transition animation has
+  /// completed, when the animation reaches [AnimationStatus.completed].
+  ///
+  /// [onDismissed] is a callback executed when the transition animation
+  /// has reset, when the animation reaches [AnimationStatus.dismissed].
   ///
   /// [maintainSize] sets whether to maintain space for where the widget would,
   /// have been when it is not [visible].
@@ -57,6 +65,8 @@ class FadeAndTranslate extends StatefulWidget {
     this.autoStartDelay,
     this.onStart,
     this.onComplete,
+    this.onCompleted,
+    this.onDismissed,
     this.maintainSize = false,
     this.maintainState = false,
   })  : assert(child != null),
@@ -106,13 +116,23 @@ class FadeAndTranslate extends StatefulWidget {
   /// The duration to delay the transition triggered by [autoStart].
   final Duration autoStartDelay;
 
-  /// A callback that's executed when the transition starts,
-  /// when the animation reaches [AnimationStatus.dismissed].
+  /// If `true`, the [autoStart] transition will be triggered whenever
+  /// the [child] is replaced with a new widget.
+  final bool autoStartNewChildren;
+
+  /// A callback executed when the transition starts.
   final Function onStart;
 
-  /// A callback that's executed when the transition is completed,
-  /// when the animation reaches [AnimationStatus.completed].
+  /// A callback executed when the transition is completed.
   final Function onComplete;
+
+  /// A callback executed when the transition animation has completed,
+  /// when the animation reaches [AnimationStatus.completed].
+  final Function onCompleted;
+
+  /// A callback executed when the transition animation has reset,
+  /// the animation reaches [AnimationStatus.dismissed].
+  final Function onDismissed;
 
   /// Whether to maintain space for where the widget would have been.
   ///
@@ -202,12 +222,19 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
       if (mounted) setState(() {});
     });
 
-    if (widget.onStart != null || widget.onComplete != null) {
+    if (widget.onComplete != null ||
+        widget.onCompleted != null ||
+        widget.onDismissed != null) {
       _animationController.addStatusListener((status) {
-        if (status == AnimationStatus.dismissed) {
-          widget?.onStart();
-        } else if (status == AnimationStatus.completed) {
-          widget?.onComplete();
+        if (status == AnimationStatus.dismissed ||
+            status == AnimationStatus.completed) {
+          if (widget.onComplete != null) widget.onComplete();
+
+          if (status == AnimationStatus.dismissed) {
+            if (widget.onDismissed != null) widget.onDismissed();
+          } else {
+            if (widget.onCompleted != null) widget.onCompleted();
+          }
         }
       });
     }
@@ -246,6 +273,8 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
   }
 
   void _toggle() {
+    if (widget.onStart != null) widget.onStart();
+
     if (_visible) {
       _animationController.reverse();
     } else {
