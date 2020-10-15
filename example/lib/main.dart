@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static const Duration _delay = const Duration(milliseconds: 40);
 
   /// The amount each widget translates during the transition.
-  static const Offset _translate = Offset(0.0, 24.0);
+  static const Offset _translate = Offset(0.0, -24.0);
 
   bool _visible = true;
 
