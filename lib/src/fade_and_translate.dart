@@ -208,7 +208,7 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
     // Build the [AnimationController].
     _animationController = AnimationController(
       duration: widget.duration,
-      value: _visible ? 1.0 : 0.0,
+      value: _visible ? 0.0 : 1.0,
       vsync: this,
     );
 
@@ -277,9 +277,9 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
     if (widget.onStart != null) widget.onStart();
 
     if (_visible) {
-      _animationController.reverse();
-    } else {
       _animationController.forward();
+    } else {
+      _animationController.reverse();
     }
 
     _visible = widget.visible;
@@ -290,7 +290,7 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: _animationController.value > 0,
+      visible: _animationController.value < 1.0,
       maintainSize: widget.maintainSize,
       maintainState: widget.maintainState,
       child: AnimatedBuilder(
@@ -299,9 +299,8 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
         builder: (BuildContext context, Widget child) => Transform.translate(
           offset: _translate,
           transformHitTests: false,
-          child: AnimatedOpacity(
-            duration: widget.duration,
-            opacity: _visible ? 1.0 : 0.0,
+          child: Opacity(
+            opacity: 1.0 - _animationController.value,
             child: child,
           ),
         ),
