@@ -51,8 +51,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(_visible ? Icons.visibility_off : Icons.visibility),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20.0,
+        padding: const EdgeInsets.only(
+          top: 12.0,
+          left: 20.0,
+          right: 20.0,
         ),
         children: [
           FadeAndTranslate(
