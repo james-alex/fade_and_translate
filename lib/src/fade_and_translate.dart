@@ -60,7 +60,7 @@ class FadeAndTranslate extends StatefulWidget {
     this.visible = true,
     this.duration = const Duration(milliseconds: 120),
     this.delay,
-    this.curve,
+    this.curve = Curves.easeIn,
     this.autoStart = false,
     this.autoStartDelay,
     this.onStart,
@@ -73,6 +73,7 @@ class FadeAndTranslate extends StatefulWidget {
         assert(translate != null),
         assert(visible != null),
         assert(duration != null),
+        assert(curve != null),
         assert(autoStart != null),
         assert(maintainSize != null),
         assert(maintainState != null),
@@ -107,7 +108,7 @@ class FadeAndTranslate extends StatefulWidget {
 
   /// The curve to use when transforming the value of the animation.
   ///
-  /// Copied from `CurveTween`.
+  /// Applies to both the fade and the translation.
   final Curve curve;
 
   /// If `true`, the widget will start transitioning as soon as it's built.
