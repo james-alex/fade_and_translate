@@ -273,6 +273,7 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
     super.didUpdateWidget(old);
   }
 
+  /// Toggles the transition.
   void _toggle() {
     if (widget.onStart != null) widget.onStart();
 
