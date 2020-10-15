@@ -29,11 +29,13 @@ class FadeAndTranslate extends StatefulWidget {
   /// state opposite of [visible], so if [visible] is `true`, the transition
   /// will auto-start from being hidden and become visible.
   ///
-  /// [autoStartDelay] is used to delay the transition triggered by [autoStart]. It
-  /// does not affect any transitions triggered by toggling [visible]. If [delay]
-  /// isn't `null` and [autoStartDelay] is, [autoStartDelay] will inherit [delay]'s
-  /// specified duration.
+  /// [autoStartDelay] is used to delay the transition triggered by [autoStart].
+  /// It does not affect any transitions triggered by toggling [visible].
+  /// If [delay] isn't `null` and [autoStartDelay] is, [autoStartDelay] will
+  /// inherit [delay]'s value.
   ///
+  /// If [autoStartNewChildren] is `true`, the [autoStart] transition will be
+  /// triggered whenever the [child] is replaced with a new widget.
   ///
   /// [onStart] is a callback executed when the transiton has started (when
   /// the transition is toggled,) regardless of the direction of the transition.
@@ -63,6 +65,7 @@ class FadeAndTranslate extends StatefulWidget {
     this.curve = Curves.easeIn,
     this.autoStart = false,
     this.autoStartDelay,
+    this.autoStartNewChildren = true,
     this.onStart,
     this.onComplete,
     this.onCompleted,
@@ -75,6 +78,7 @@ class FadeAndTranslate extends StatefulWidget {
         assert(duration != null),
         assert(curve != null),
         assert(autoStart != null),
+        assert(autoStartNewChildren != null),
         assert(maintainSize != null),
         assert(maintainState != null),
         super(key: key);
@@ -242,13 +246,7 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
 
     // Toggle the transition if [widget.autoStart] is `true`.
     if (widget.autoStart) {
-      final autoStartDelay = widget.autoStartDelay ?? widget.delay;
-
-      if (autoStartDelay != null) {
-        Timer(autoStartDelay, () => _toggle());
-      } else {
-        _toggle();
-      }
+      _autoStart();
     }
   }
 
@@ -262,6 +260,14 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
 
   @override
   void didUpdateWidget(FadeAndTranslate old) {
+    if (widget.child != old.child &&
+        widget.autoStart &&
+        widget.autoStartNewChildren) {
+      _visible = !widget.visible;
+      _animationController.value = _visible ? 0.0 : 1.0;
+      _autoStart();
+    }
+
     if (widget.visible != old.visible) {
       if (widget.delay != null) {
         Timer(widget.delay, () => _toggle());
@@ -271,6 +277,17 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
     }
 
     super.didUpdateWidget(old);
+  }
+
+  /// Triggers the auto-start transition.
+  void _autoStart() {
+    final autoStartDelay = widget.autoStartDelay ?? widget.delay;
+
+    if (autoStartDelay != null) {
+      Timer(autoStartDelay, () => _toggle());
+    } else {
+      _toggle();
+    }
   }
 
   /// Toggles the transition.
