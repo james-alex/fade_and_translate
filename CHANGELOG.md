@@ -1,3 +1,8 @@
+## [0.1.2] - October 29, 2020
+
+* Added the [maintainAnimation], [maintainInteractivity], and [maintainSemantics]
+parameters, behaviors which are controlled by a [Visibility] widget.
+
 ## [0.1.1] - October 14, 2020
 
 * Added the [onCompleted] and [onDismissed] callbacks, which are called

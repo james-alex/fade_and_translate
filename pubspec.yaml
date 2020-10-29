@@ -2,7 +2,7 @@ name: fade_and_translate
 description: >-
   A widget that toggles the visibility of its child by simultaneously
   fading the child in or out while translating its positional offset.
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/james-alex/fade_and_translate
 
 environment:
