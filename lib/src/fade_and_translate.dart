@@ -67,6 +67,9 @@ class FadeAndTranslate extends StatefulWidget {
     this.onCompleted,
     this.onDismissed,
     this.maintainSize = false,
+    this.maintainAnimation = false,
+    this.maintainInteractivity = false,
+    this.maintainSemantics = false,
     this.maintainState = false,
   })  : assert(child != null),
         assert(translate != null),
@@ -75,6 +78,9 @@ class FadeAndTranslate extends StatefulWidget {
         assert(curve != null),
         assert(autoStart != null),
         assert(maintainSize != null),
+        assert(maintainAnimation != null),
+        assert(maintainInteractivity != null),
+        assert(maintainSemantics != null),
         assert(maintainState != null),
         super(key: key);
 
@@ -153,6 +159,63 @@ class FadeAndTranslate extends StatefulWidget {
   ///
   /// Copied from `Visibility`.
   final bool maintainSize;
+
+  /// Whether to maintain animations within the [child] subtree when it is
+  /// not [visible].
+  ///
+  /// To set this, [maintainState] must also be set.
+  ///
+  /// Keeping animations active when the widget is not visible is even more
+  /// expensive than only maintaining the state.
+  ///
+  /// One example when this might be useful is if the subtree is animating its
+  /// layout in time with an [AnimationController], and the result of that
+  /// layout is being used to influence some other logic. If this flag is false,
+  /// then any [AnimationController]s hosted inside the [child] subtree will be
+  /// muted while the [visible] flag is false.
+  ///
+  /// If this property is true, no [TickerMode] widget is used.
+  ///
+  /// If this property is false, then [maintainSize] must also be false.
+  ///
+  /// Dynamically changing this value may cause the current state of the
+  /// subtree to be lost (and a new instance of the subtree, with new [State]
+  /// objects, to be immediately created if [visible] is true).
+  ///
+  /// Copied from `Visibility`.
+  final bool maintainAnimation;
+
+  /// Whether to allow the widget to be interactive when hidden.
+  ///
+  /// To set this, [maintainSize] must also be set.
+  ///
+  /// By default, with [maintainInteractivity] set to false, touch events cannot
+  /// reach the [child] when it is hidden from the user. If this flag is set to
+  /// true, then touch events will nonetheless be passed through.
+  ///
+  /// Dynamically changing this value may cause the current state of the
+  /// subtree to be lost (and a new instance of the subtree, with new [State]
+  /// objects, to be immediately created if [visible] is true).
+  ///
+  /// Copied from `Visibility`.
+  final bool maintainInteractivity;
+
+  /// Whether to maintain the semantics for the widget when it is hidden (e.g.
+  /// for accessibility).
+  ///
+  /// To set this, [maintainSize] must also be set.
+  ///
+  /// By default, with [maintainSemantics] set to false, the [child] is not
+  /// visible to accessibility tools when it is hidden from the user. If this
+  /// flag is set to true, then accessibility tools will report the widget as if
+  /// it was present.
+  ///
+  /// Dynamically changing this value may cause the current state of the
+  /// subtree to be lost (and a new instance of the subtree, with new [State]
+  /// objects, to be immediately created if [visible] is true).
+  ///
+  /// Copied from `Visibility`.
+  final bool maintainSemantics;
 
   /// Whether to maintain the [State] objects of the [child] subtree when it is
   /// not [visible].
@@ -293,6 +356,9 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
     return Visibility(
       visible: _animationController.value < 1.0,
       maintainSize: widget.maintainSize,
+      maintainAnimation: widget.maintainAnimation,
+      maintainInteractivity: widget.maintainInteractivity,
+      maintainSemantics: widget.maintainSemantics,
       maintainState: widget.maintainState,
       child: AnimatedBuilder(
         animation: _animationController,
