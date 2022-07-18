@@ -53,9 +53,9 @@ class FadeAndTranslate extends StatefulWidget {
   /// [maintainState] sets whether to maintain the [State] objects of the [child]
   /// subtree when it is not [visible].
   const FadeAndTranslate({
-    Key key,
-    @required this.child,
-    @required this.translate,
+    Key? key,
+    required this.child,
+    required this.translate,
     this.visible = true,
     this.duration = const Duration(milliseconds: 120),
     this.delay,
@@ -71,18 +71,7 @@ class FadeAndTranslate extends StatefulWidget {
     this.maintainInteractivity = false,
     this.maintainSemantics = false,
     this.maintainState = false,
-  })  : assert(child != null),
-        assert(translate != null),
-        assert(visible != null),
-        assert(duration != null),
-        assert(curve != null),
-        assert(autoStart != null),
-        assert(maintainSize != null),
-        assert(maintainAnimation != null),
-        assert(maintainInteractivity != null),
-        assert(maintainSemantics != null),
-        assert(maintainState != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The widget passed to the builder.
   final Widget child;
@@ -109,32 +98,32 @@ class FadeAndTranslate extends StatefulWidget {
 
   /// A [Duration] used to delay the start of the transition
   /// once it's been triggered.
-  final Duration delay;
+  final Duration? delay;
 
   /// The curve to use when transforming the value of the animation.
   ///
   /// Applies to both the fade and the translation.
-  final Curve curve;
+  final Curve? curve;
 
   /// If `true`, the widget will start transitioning as soon as it's built.
   final bool autoStart;
 
   /// The duration to delay the transition triggered by [autoStart].
-  final Duration autoStartDelay;
+  final Duration? autoStartDelay;
 
   /// A callback executed when the transition starts.
-  final Function onStart;
+  final Function? onStart;
 
   /// A callback executed when the transition is completed.
-  final Function onComplete;
+  final Function? onComplete;
 
   /// A callback executed when the transition animation has completed,
   /// when the animation reaches [AnimationStatus.completed].
-  final Function onCompleted;
+  final Function? onCompleted;
 
   /// A callback executed when the transition animation has reset,
   /// the animation reaches [AnimationStatus.dismissed].
-  final Function onDismissed;
+  final Function? onDismissed;
 
   /// Whether to maintain space for where the widget would have been.
   ///
@@ -240,20 +229,20 @@ class FadeAndTranslate extends StatefulWidget {
   final bool maintainState;
 
   @override
-  _FadeAndTranslateState createState() => _FadeAndTranslateState();
+  FadeAndTranslateState createState() => FadeAndTranslateState();
 }
 
-class _FadeAndTranslateState extends State<FadeAndTranslate>
+class FadeAndTranslateState extends State<FadeAndTranslate>
     with SingleTickerProviderStateMixin {
   /// The current state of the transition.
-  bool _visible;
+  late bool _visible;
 
   /// The current offset of the child.
-  Offset _translate;
+  late Offset _translate;
 
   /// The animation controller used to drive both the
   /// opacity and offset animations.
-  AnimationController _animationController;
+  late AnimationController _animationController;
 
   @override
   void initState() {
@@ -271,13 +260,12 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
     );
 
     if (widget.curve != null) {
-      _animationController.drive(CurveTween(curve: widget.curve));
+      _animationController.drive(CurveTween(curve: widget.curve!));
     }
 
     _animationController.addListener(() {
       _translate = Offset.lerp(
-          Offset.zero, widget.translate, _animationController.value);
-
+          Offset.zero, widget.translate, _animationController.value)!;
       if (mounted) setState(() {});
     });
 
@@ -287,12 +275,12 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
       _animationController.addStatusListener((status) {
         if (status == AnimationStatus.dismissed ||
             status == AnimationStatus.completed) {
-          if (widget.onComplete != null) widget.onComplete();
+          if (widget.onComplete != null) widget.onComplete!();
 
           if (status == AnimationStatus.dismissed) {
-            if (widget.onDismissed != null) widget.onDismissed();
+            if (widget.onDismissed != null) widget.onDismissed!();
           } else {
-            if (widget.onCompleted != null) widget.onCompleted();
+            if (widget.onCompleted != null) widget.onCompleted!();
           }
         }
       });
@@ -313,16 +301,15 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
   }
 
   @override
-  void didUpdateWidget(FadeAndTranslate old) {
-    if (widget.visible != old.visible) {
+  void didUpdateWidget(FadeAndTranslate oldWidget) {
+    if (widget.visible != oldWidget.visible) {
       if (widget.delay != null) {
-        Timer(widget.delay, () => _toggle());
+        Timer(widget.delay!, () => _toggle());
       } else {
         _toggle();
       }
     }
-
-    super.didUpdateWidget(old);
+    super.didUpdateWidget(oldWidget);
   }
 
   /// Triggers the auto-start transition.
@@ -338,16 +325,13 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
 
   /// Toggles the transition.
   void _toggle() {
-    if (widget.onStart != null) widget.onStart();
-
+    if (widget.onStart != null) widget.onStart!();
     if (_visible) {
       _animationController.forward();
     } else {
       _animationController.reverse();
     }
-
     _visible = widget.visible;
-
     if (mounted) setState(() {});
   }
 
@@ -363,7 +347,7 @@ class _FadeAndTranslateState extends State<FadeAndTranslate>
       child: AnimatedBuilder(
         animation: _animationController,
         child: widget.child,
-        builder: (BuildContext context, Widget child) => Transform.translate(
+        builder: (BuildContext context, Widget? child) => Transform.translate(
           offset: _translate,
           transformHitTests: false,
           child: Opacity(
