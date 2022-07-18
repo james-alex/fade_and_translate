@@ -1,3 +1,7 @@
+## [0.1.3] - July 18, 2022
+
+* Migrated to null-safe code.
+
 ## [0.1.2] - October 29, 2020
 
 * Added the [maintainAnimation], [maintainInteractivity], and [maintainSemantics]

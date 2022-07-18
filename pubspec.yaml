@@ -2,12 +2,12 @@ name: fade_and_translate
 description: >-
   A widget that toggles the visibility of its child by simultaneously
   fading the child in or out while translating its positional offset.
-version: 0.1.2
+version: 0.1.3
 homepage: https://github.com/james-alex/fade_and_translate
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.17.0 <2.0.0"
+  sdk: ">=2.17.0 <3.0.0"
+  flutter: ">=1.17.0"
 
 dependencies:
   flutter:
